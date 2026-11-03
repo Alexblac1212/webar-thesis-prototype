@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {MINDARThree} from 'mindar-image-three';
+import {MindARThree} from 'mindar-image-three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 const start = async () => {
