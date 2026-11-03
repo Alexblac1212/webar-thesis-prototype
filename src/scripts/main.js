@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 const start = async () => {
     
-    const mindarThree = new MINDARThree({
+    const mindarThree = new MindARThree({
         container: document.querySelector("#ar-container"),
         imageTargetSrc: './assets/targets.mind',
     });
