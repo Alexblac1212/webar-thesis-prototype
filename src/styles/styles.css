@@ -80,3 +80,154 @@ body {
   margin-top: 2px;
   opacity: 0.9;
 }
+
+
+.ar-ui-root {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.ar-mode-bar {
+  pointer-events: auto;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  background: rgba(15, 18, 24, 0.82);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.ar-mode-btn {
+  background: transparent;
+  color: #cfd6e4;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ar-mode-btn--active {
+  background: #00ff88;
+  color: #09110d;
+}
+
+body.ar-mode-developer .ar-mode-bar {
+  top: auto;
+  bottom: 92px;
+  right: 10px;
+}
+
+.ar-info-card {
+  pointer-events: auto;
+  position: fixed;
+  top: 52px;
+  left: 10px;
+  right: 10px;
+  max-width: 440px;
+  background: rgba(15, 18, 24, 0.84);
+  color: #f4f6fa;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.ar-info-card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ar-info-card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ar-info-card-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #00ff88;
+  white-space: nowrap;
+}
+
+.ar-info-card-subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #b8c2d4;
+}
+
+.ar-controls-panel {
+  pointer-events: auto;
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  bottom: 12px;
+  margin: 0 auto;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(15, 18, 24, 0.86);
+  color: #f4f6fa;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.ar-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ar-controls-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b8c2d4;
+  min-width: 46px;
+}
+
+.ar-controls-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ar-swatch-btn,
+.ar-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f6fa;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ar-swatch-btn--active,
+.ar-chip-btn--active {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.18);
+  color: #00ff88;
+}
+
+.ar-swatch-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}

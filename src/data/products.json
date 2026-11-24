@@ -1,0 +1,55 @@
+{
+  "defaultProductId": "table-minimal",
+  "products": [
+    {
+      "id": "table-minimal",
+      "label": "Szafka",
+      "title": "Szafka stojąca",
+      "subtitle": "Obróć jednym palcem, przybliż dwoma. Wybierz wariant",
+      "price": "499 zł",
+      "modelUrl": "./assets/model.glb",
+      "scale": 0.5,
+      "materials": [
+        {
+          "id": "matte-oak",
+          "label": "Dąb mat",
+          "swatchHex": "#c89d6c",
+          "colorHex": "#c89d6c",
+          "roughness": 0.85,
+          "metalness": 0.0,
+          "maps": {
+            "map": null,
+            "roughnessMap": null,
+            "normalMap": null
+          }
+        },
+        {
+          "id": "satin-graphite",
+          "label": "Grafit satyna",
+          "swatchHex": "#3a3f47",
+          "colorHex": "#3a3f47",
+          "roughness": 0.35,
+          "metalness": 0.2,
+          "maps": {
+            "map": null,
+            "roughnessMap": null,
+            "normalMap": null
+          }
+        },
+        {
+          "id": "brushed-metal",
+          "label": "Metaliczny",
+          "swatchHex": "#9aa3ad",
+          "colorHex": "#9aa3ad",
+          "roughness": 0.25,
+          "metalness": 0.85,
+          "maps": {
+            "map": null,
+            "roughnessMap": null,
+            "normalMap": null
+          }
+        }
+      ]
+    }
+  ]
+}
