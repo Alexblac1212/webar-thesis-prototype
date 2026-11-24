@@ -155,6 +155,11 @@ export function createPerformanceTelemetry({ showHud = true } = {}) {
 
         mainLineEl.textContent = `FPS: ${currentFps} | Frame: ${frameMs.toFixed(1)}ms`;
         extraLineEl.textContent = `Track: ${isTracking ? "TAK" : "NIE"} | Load: ${loadText}${latText}`;
+   
+        const { avgFpsOverall, avgFrameTimeMs } = getSummary().summary;
+        avgLineEl.textContent = `Śr. FPS: ${avgFpsOverall ?? "--"} | Śr. Frame: ${avgFrameTimeMs !== null ? `${avgFrameTimeMs}ms` : "-- ms"
+            }`;
+    
     }
 
     function recordModelLoad(durationMs) {

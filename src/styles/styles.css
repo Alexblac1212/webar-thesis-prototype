@@ -29,7 +29,7 @@ body {
   min-width: 190px;
 }
 
-.ar-telemetry-hud--minimized {
+.ar-telemetry-hud-minimized {
   min-width: auto;
   padding: 6px 8px;
 }
