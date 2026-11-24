@@ -10,10 +10,16 @@ const start = async () => {
 
     const telemetry = createPerformanceTelemetry({showHud: true});
     
+
+    const container = document.querySelector("#ar-container");
     const mindarThree = new MindARThree({
-        container: document.querySelector("#ar-container"),
-        imageTargetSrc: './assets/targets.mind',
+        container,
+        imageTargetSrc: "./assets/targets.mind",
     });
+    // const mindarThree = new MindARThree({
+    //     container: document.querySelector("#ar-container"),
+    //     imageTargetSrc: './assets/targets.mind',
+    // });
 
     const {renderer, scene, camera } = mindarThree;
 
@@ -60,9 +66,11 @@ const start = async () => {
     );
 
     anchor.onTargetFound = () => {
+        isTargetVisible = true;
         telemetry.setTrackingState(true);
     };
     anchor.onTargetLost = () => {
+        isTargetVisible = false;
         telemetry.setTrackingState(false);
     };
 
