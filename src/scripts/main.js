@@ -2,6 +2,7 @@ import * as THREE from "three";
 import {MindARThree} from 'mindar-image-three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { createPerformanceTelemetry } from "./telemetry.js";
+import { setupModelInteractions } from "./interactions.js";
 
 
 
@@ -33,10 +34,19 @@ const start = async () => {
             telemetry.recordModelLoad(performance.now() - modelLoadStart);
             const model = gltf.scene;
 
-            model.scale.set(0.5,0.5,0.5);
+            // model.scale.set(0.5,0.5,0.5);
+            model.scale.setScalar(baseScale);
             model.position.set(0, 0, 0);
 
             anchor.group.add(model);
+
+            setupModelInteractions({
+                container,
+                targetObject: model,
+                isTracking: () => isTargetVisible,
+                baseScale,
+                onMeasureLatency: (ts) => telemetry.measureInteractionLatency(ts),
+            });
         },
         (xhr) => {
             console.log((xhr.loaded / xhr.total * 100) + '% loaded');
