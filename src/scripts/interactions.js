@@ -1,4 +1,4 @@
-export function setupModelInteractions ({
+export function setupModelInteractions({
     container,
     targetObject,
     isTracking,
@@ -7,7 +7,7 @@ export function setupModelInteractions ({
     maxScale = 2.0,
     onMeasureLatency,
 }) {
-    if (!container || !targetObject) return () => {};
+    if (!targetObject) return () => {};
 
     let isDragging = false;
     let lastX = 0;
@@ -17,8 +17,10 @@ export function setupModelInteractions ({
     let initialPinchDistance = null;
     let scaleMultiplier = 1;
 
-    const rotationSpeed = 0.01;
-    const tiltSpeed = 0.004;
+    targetObject.scale.setScalar(baseScale * scaleMultiplier);
+
+    const rotationSpeed = 0.012;
+    const tiltSpeed = 0.005;
     const maxTiltX = 0.35;
 
     function getPinchDistance() {
@@ -26,20 +28,17 @@ export function setupModelInteractions ({
         if (points.length < 2) return null;
         const dx = points[0].x - points[1].x;
         const dy = points[0].y - points[1].y;
-        return Math.hypot(dx,dy);
+        return Math.hypot(dx, dy);
     }
 
-
     function onPointerDown(event) {
-        
         if (event.target.closest(".ar-telemetry-hud")) return;
-        if(isTracking && !isTracking()) return;
 
         if (onMeasureLatency) {
             onMeasureLatency(event.timeStamp);
         }
 
-        activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY});
+        activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
 
         if (activePointers.size === 1) {
             isDragging = true;
@@ -54,9 +53,12 @@ export function setupModelInteractions ({
 
     function onPointerMove(event) {
         if (!activePointers.has(event.pointerId)) return;
-        if (isTracking && !isTracking()) return;
 
-        activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY});
+        activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+        if (onMeasureLatency) {
+            onMeasureLatency(event.timeStamp);
+        }
 
         if (activePointers.size === 2) {
             const currentDistance = getPinchDistance();
@@ -113,20 +115,15 @@ export function setupModelInteractions ({
         }
     }
 
-    container.addEventListener("pointerdown", onPointerDown);
-    container.addEventListener("pointermove", onPointerMove);
-    container.addEventListener("pointerup", onPointerUp);
-    container.addEventListener("pointercancel", onPointerUp);
-    container.addEventListener("pointerleave", onPointerUp);
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
 
     return function cleanup() {
-        container.removeEventListener("pointerdown", onPointerDown);
-        container.removeEventListener("pointermove", onPointerMove);
-        container.removeEventListener("pointerup", onPointerUp);
-        container.removeEventListener("pointercancel", onPointerUp);
-        container.removeEventListener("pointerleave", onPointerUp);
-    }
-
-
-
+        window.removeEventListener("pointerdown", onPointerDown);
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", onPointerUp);
+        window.removeEventListener("pointercancel", onPointerUp);
+    };
 }
