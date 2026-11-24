@@ -89,11 +89,11 @@ export function createPerformanceTelemetry({ showHud = true } = {}) {
     }
 
     if (showHud) {
-        const hudEl = document.createElement("div");
+        hudEl = document.createElement("div");
         hudEl.className = "ar-telemetry-hud";
 
         const headerEl = document.createElement("div");
-        headerEl.className = "ar-telemetry-hud-hrader";
+        headerEl.className = "ar-telemetry-hud-header";
 
         const titleEl = document.createElement("span");
         titleEl.className = "ar-telemetry-hud-title";
