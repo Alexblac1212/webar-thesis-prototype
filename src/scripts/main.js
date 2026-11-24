@@ -31,7 +31,7 @@ const FALLBACK_CATALOG = {
     ],
 };
 
-async function loadProductsCatalog(url = "./data/products.json") {
+async function loadProductsCatalog(url = "./src/data/products.json") {
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -114,7 +114,7 @@ const start = async () => {
 
     const telemetry = createPerformanceTelemetry({showHud: true});
 
-    const catalog = await loadProductsCatalog("./data/products.json");
+    const catalog = await loadProductsCatalog("./src/data/products.json");
     const products = catalog.products || FALLBACK_CATALOG.products;
     const initialProduct = products.find((p) => p.id === catalog.defaultProductId) || products[0];
     
