@@ -141,7 +141,7 @@ export function createPerformanceTelemetry({ showHud = true } = {}) {
         avgLineEl.textContent = "śr. FPS: -- | Śr. Frame: -- ms";
 
         bodyEl.append(mainLineEl, extraLineEl, avgLineEl);
-        hudEl.append(mainLineEl, extraLineEl);
+        hudEl.append(headerEl, bodyEl);
         document.body.appendChild(hudEl);
     }
 
