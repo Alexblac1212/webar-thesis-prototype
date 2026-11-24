@@ -32,23 +32,115 @@ export function createPerformanceTelemetry({ showHud = true } = {}) {
     let isTracking = false;
     let arStartedAt = null;
     let firstTergetDetected = false;
+    let isMinimized = false;
 
+    let hudEl = null;
+    let bodyEl = null;
+    let toggleBtnEl = null;
     let mainLineEl = null;
     let extraLineEl = null;
+    let avgLineEl = null;
 
+
+    function getSummary() {
+        const fpsValues = data.fps.samples.map((s) => s.fps);
+        const trackingFps = data.fps.samples.filter((s) => s.isTracking).map((s) => s.fps);
+        const idleFps = data.fps.samples.filter((s) => !s.isTracking).map((s) => s.fps);
+        const latValues = data.latency.interactionLatenciesMs;
+
+        const avg = (arr) =>
+            arr.length ? Number((arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2)) : null;
+
+        return {
+            ...data,
+            summary: {
+                avgFpsOverall: avg(fpsValues),
+                minFpsOverall: fpsValues.length ? Math.min(...fpsValues) : null,
+                maxFpsOverall: fpsValues.length ? Math.max(...fpsValues) : null,
+                avgFpsTracking: avg(trackingFps),
+                avgFpsIdle: avg(idleFps),
+                avgInteractionLatencyMs: avg(latValues),
+                avgFrameTimeMs: avg(data.latency.frameTimeMs),
+            },
+        };
+    }
+
+    function downloadJson() {
+        const report = getSummary();
+        const blob = new Blob([JSON.stringify(report, null, 2)], {
+            type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `webar-perf-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function setMinimized(minimized) {
+        isMinimized = minimized;
+        if (!hudEl || !bodyEl || !toggleBtnEl) return;
+
+        hudEl.classList.toggle("ar-telemetry-hud-minimized", isMinimized);
+        bodyEl.hidden = isMinimized;
+        toggleBtnEl.textContent = isMinimized ? "+" : "-";
+        toggleBtnEl.setAttribute("aria-label", isMinimized ? "Rozwiń telemetrię" : "Zwiń telemetrię");
+    }
 
     if (showHud) {
         const hudEl = document.createElement("div");
         hudEl.className = "ar-telemetry-hud";
 
+        const headerEl = document.createElement("div");
+        headerEl.className = "ar-telemetry-hud-hrader";
+
+        const titleEl = document.createElement("span");
+        titleEl.className = "ar-telemetry-hud-title";
+        titleEl.textContent = "TELEMETRIA";
+
+        const actionsEl = document.createElement("div");
+        actionsEl.className = "ar-telemetry-hud-actions";
+
+        const downloadBtnEl = document.createElement("button");
+        downloadBtnEl.type = "button";
+        downloadBtnEl.className = "ar-telemetry-hud-btn";
+        downloadBtnEl.textContent = "JSON";
+        downloadBtnEl.title = "Pobierz raport JSON";
+        downloadBtnEl.addEventListener("click", (e) => {
+            e.stopPropagation();
+            downloadJson();
+        });
+
+        toggleBtnEl = document.createElement("button");
+        toggleBtnEl.type = "button";
+        toggleBtnEl.className = "ar-telemetry-hud-btn";
+        toggleBtnEl.textContent = "-";
+        toggleBtnEl.setAttribute("aria-label", "Zwiń telemetrię");
+        toggleBtnEl.addEventListener("click", (e) => {
+            e.stopPropagation();
+            setMinimized(!isMinimized);
+        });
+
+        actionsEl.append(downloadBtnEl, toggleBtnEl);
+        headerEl.append(titleEl, actionsEl);
+
+        bodyEl = document.createElement("div");
+        bodyEl.className = "ar-telemetry-hud-body";
+
         mainLineEl = document.createElement("p");
-        mainLineEl.className = "ar-telemetry-hud-line"
+        mainLineEl.className = "ar-telemetry-hud-line";
         mainLineEl.textContent = "FPS: -- | Frame: -- ms";
 
         extraLineEl = document.createElement("p");
-        extraLineEl.className = "ar-telemetry-hud-line ar-telemetry-hud-extra"
-        extraLineEl.textContent = "Ładowanie..."
+        extraLineEl.className = "ar-telemetry-hud-line ar-telemetry-hud-extra";
+        extraLineEl.textContent = "Ładowanie...";
 
+        avgLineEl = document.createElement("p");
+        avgLineEl.className = "ar-telemetry-hud-line ar-telemetry-hud-extra";
+        avgLineEl.textContent = "śr. FPS: -- | Śr. Frame: -- ms";
+
+        bodyEl.append(mainLineEl, extraLineEl, avgLineEl);
         hudEl.append(mainLineEl, extraLineEl);
         document.body.appendChild(hudEl);
     }
@@ -132,43 +224,6 @@ export function createPerformanceTelemetry({ showHud = true } = {}) {
         }
     }
 
-
-    function getSummary() {
-        const fpsValues = data.fps.samples.map((s) => s.fps);
-        const trackingFps = data.fps.samples.filter((s) => s.isTracking).map((s) => s.fps);
-        const idleFps = data.fps.samples.filter((s) => !s.isTracking).map((s) => s.fps);
-        const latValues = data.latency.interactionLatenciesMs;
-
-        const avg = (arr) =>
-            arr.length ? Number((arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2)) : null;
-
-        return {
-            ...data,
-            summary: {
-                avgFpsOverall: avg(fpsValues),
-                minFpsOverall: fpsValues.length ? Math.min(...fpsValues) : null,
-                maxFpsOverall: fpsValues.length ? Math.max(...fpsValues) : null,
-                avgFpsTracking: avg(trackingFps),
-                avgFpsIdle: avg(idleFps),
-                avgInteractionLatencyMs: avg(latValues),
-                avgFrameTimeMs: avg(data.latency.frameTimeMs),
-            },
-        };
-    }
-
-    function downloadJson() {
-        const report = getSummary();
-        const blob = new Blob([JSON.stringify(report, null, 2)], {
-            type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `webar-perf-${Date.now()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
     return {
         recordModelLoad,
         recordArStart,
@@ -177,8 +232,11 @@ export function createPerformanceTelemetry({ showHud = true } = {}) {
         beginFrame,
         endFrame,
         getSummary,
-        downloadJson
+        downloadJson,
+        setMinimized,
     };
+
+
 
 
 

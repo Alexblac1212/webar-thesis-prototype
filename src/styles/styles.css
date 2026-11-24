@@ -18,7 +18,7 @@ body {
   top: 10px;
   left: 10px;
   z-index: 9999;
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(0, 0, 0, 0.78);
   color: #00ff88;
   font-family: monospace;
   font-size: 12px;
@@ -26,6 +26,49 @@ body {
   border-radius: 6px;
   line-height: 1.4;
   pointer-events: auto;
+  min-width: 190px;
+}
+
+.ar-telemetry-hud--minimized {
+  min-width: auto;
+  padding: 6px 8px;
+}
+
+.ar-telemetry-hud-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ar-telemetry-hud-title {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.ar-telemetry-hud-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.ar-telemetry-hud-btn {
+  background: rgba(255, 255, 255, 0.14);
+  color: #00ff88;
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.ar-telemetry-hud-btn:active {
+  background: rgba(0, 255, 136, 0.25);
+}
+
+.ar-telemetry-hud-body {
+  margin-top: 6px;
 }
 
 .ar-telemetry-hud-line {
