@@ -26,6 +26,9 @@ const start = async () => {
 
     const anchor = mindarThree.addAnchor(0);
 
+    let isTargetVisible = false;
+    const baseScale = 0.5;
+
     const modelLoadStart = performance.now();
     const loader = new GLTFLoader();
     loader.load(
