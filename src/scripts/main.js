@@ -1,8 +1,13 @@
 import * as THREE from "three";
 import {MindARThree} from 'mindar-image-three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import { createPerformanceTelemetry } from "./telemetry.js";
+
+
 
 const start = async () => {
+
+    const telemetry = createPerformanceTelemetry({showHud: true});
     
     const mindarThree = new MindARThree({
         container: document.querySelector("#ar-container"),
@@ -20,10 +25,12 @@ const start = async () => {
 
     const anchor = mindarThree.addAnchor(0);
 
+    const modelLoadStart = performance.now();
     const loader = new GLTFLoader();
     loader.load(
         './assets/model.glb',
         (gltf) => {
+            telemetry.recordModelLoad(performance.now() - modelLoadStart);
             const model = gltf.scene;
 
             model.scale.set(0.5,0.5,0.5);
@@ -39,10 +46,24 @@ const start = async () => {
         }
     );
 
+    anchor.onTargetFound = () => {
+        telemetry.setTrackingState(true);
+    };
+    anchor.onTargetLost = () => {
+        telemetry.setTrackingState(false);
+    };
+
+    const arStart = performance.now();
     await mindarThree.start();
+
+    telemetry.recordArStart(performance.now() - arStart);
     renderer.setAnimationLoop(() => {
+        const frameStart = telemetry.beginFrame();
         renderer.render(scene, camera);
+        telemetry.endFrame(frameStart);
     });
+
+    window.exportTelemetry = () => telemetry.downloadJson();
 };
 
 start();
