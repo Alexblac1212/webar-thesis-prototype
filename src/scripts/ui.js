@@ -41,18 +41,20 @@ export function createAppUi({
     const infoCardEl = document.createElement("section");
     infoCardEl.className = "ar-info-card";
 
-    function makeDraggable(el) {
+    function makeDraggable(el, { baseTransform = "", onDragStateChange } = {}) {
         let startX = 0;
         let startY = 0;
         let currentX = 0;
         let currentY = 0;
         let isDragging = false;
+        let hasMoved = false;
 
         el.addEventListener("pointerdown", (e) => {
             if (e.pointerType === "mouse" && e.button !== 0) return;
 
             isDragging = true;
-            el.classList.add("ar-info-card-dragging");
+            hasMoved = false;
+            el.classList.add("ar-dragging");
 
             startX = e.clientX - currentX;
             startY = e.clientY - currentY;
@@ -65,6 +67,11 @@ export function createAppUi({
 
             const rawX = e.clientX - startX;
             const rawY = e.clientY - startY;
+
+            if (!hasMoved && Math.hypot(rawX - currentX, rawY - currentY) < 6) {
+                return;
+            }
+            hasMoved = true;
 
             const rect = el.getBoundingClientRect();
             const baseLeft = rect.left - currentX;
@@ -79,23 +86,41 @@ export function createAppUi({
             currentX = Math.min(Math.max(rawX, minX), maxX);
             currentY = Math.min(Math.max(rawY, minY), maxY);
 
-            el.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+            el.style.transform = `${baseTransform} translate3d(${currentX}px, ${currentY}px, 0)`.trim();
         });
 
         function stopDrag(e) {
             if (!isDragging) return;
             isDragging = false;
-            el.classList.remove("ar-info-card-dragging");
+            el.classList.remove("ar-dragging");
+
             if (el.hasPointerCapture && el.hasPointerCapture(e.pointerId)) {
                 el.releasePointerCapture(e.pointerId);
+            }
+
+            if (hasMoved && onDragStateChange) {
+                onDragStateChange();
             }
         }
 
         el.addEventListener("pointerup", stopDrag);
         el.addEventListener("pointercancel", stopDrag);
+
+        return () => hasMoved;
     }
 
     makeDraggable(infoCardEl);
+
+    let suppressModeClick = false;
+    makeDraggable(modeBarEl, {
+        baseTransform: "translateY(-50%)",
+        onDragStateChange: () => {
+            suppressModeClick = true;
+            setTimeout(() => {
+                suppressModeClick = false;
+            }, 50);
+        },
+    });
 
     const infoTopRowEl = document.createElement("div");
     infoTopRowEl.className = "ar-info-card-top";
@@ -247,12 +272,14 @@ export function createAppUi({
 
     clientBtnEl.addEventListener("click", (e) => {
         e.stopPropagation();
+        if (suppressModeClick) return;
         if (onMeasureLatency) onMeasureLatency(e.timeStamp);
         applyMode("client");
     });
 
     devBtnEl.addEventListener("click", (e) => {
         e.stopPropagation();
+        if (suppressModeClick) return;
         if (onMeasureLatency) onMeasureLatency(e.timeStamp);
         applyMode("developer");
     });
