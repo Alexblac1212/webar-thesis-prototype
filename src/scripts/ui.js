@@ -105,11 +105,7 @@ export function createAppUi({
 
         el.addEventListener("pointerup", stopDrag);
         el.addEventListener("pointercancel", stopDrag);
-
-        return () => hasMoved;
     }
-
-    makeDraggable(infoCardEl);
 
     let suppressModeClick = false;
     makeDraggable(modeBarEl, {
