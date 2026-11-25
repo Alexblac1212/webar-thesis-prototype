@@ -1,210 +1,214 @@
 export function createAppUi({
-  initialMode = "client",
-  products = [],
-  initialProductId,
-  onSelectMaterial,
-  onSelectProduct,
-  onModeChange,
-  onSetTelemetryMinimized,
-  onMeasureLatency,
+    initialMode = "client",
+    products = [],
+    initialProductId,
+    onSelectMaterial,
+    onSelectProduct,
+    onModeChange,
+    onSetTelemetryMinimized,
+    onMeasureLatency,
 }) {
 
-  let currentMode = initialMode;
+    let currentMode = initialMode;
 
-  let activeProduct =
-    products.find((p) => p.id === initialProductId) || products[0] || null;
+    let activeProduct =
+        products.find((p) => p.id === initialProductId) || products[0] || null;
 
-  let activeMaterialId = activeProduct?.materials?.[0]?.id || null;
+    let activeMaterialId = activeProduct?.materials?.[0]?.id || null;
 
-  const rootEl = document.createElement("div");
-  rootEl.className = "ar-ui-root";
+    const rootEl = document.createElement("div");
+    rootEl.className = "ar-ui-root";
 
-  const modeBarEl = document.createElement("div");
-  modeBarEl.className = "ar-mode-bar";
+    const modeBarEl = document.createElement("div");
+    modeBarEl.className = "ar-mode-bar";
 
-  const clientBtnEl = document.createElement("button");
-  clientBtnEl.type = "button";
-  clientBtnEl.className = "ar-mode-btn";
-  clientBtnEl.textContent = "Klient";
+    const clientBtnEl = document.createElement("button");
+    clientBtnEl.type = "button";
+    clientBtnEl.className = "ar-mode-btn";
+    clientBtnEl.innerHTML = '<i class="bi bi-person" aria-hidden="true"></i>';
+    clientBtnEl.title = "Tryb Klient";
+    clientBtnEl.setAttribute("aria-label", "Tryb Klient");
 
-  const devBtnEl = document.createElement("button");
-  devBtnEl.type = "button";
-  devBtnEl.className = "ar-mode-btn";
-  devBtnEl.textContent = "Deweloper";
+    const devBtnEl = document.createElement("button");
+    devBtnEl.type = "button";
+    devBtnEl.className = "ar-mode-btn";
+    devBtnEl.innerHTML = '<i class="bi bi-sliders2" aria-hidden="true"></i>';
+    devBtnEl.title = "Tryb Deweloper";
+    devBtnEl.setAttribute("aria-label", "Tryb Deweloper");
 
-  modeBarEl.append(clientBtnEl, devBtnEl);
+    modeBarEl.append(clientBtnEl, devBtnEl);
 
-  const infoCardEl = document.createElement("section");
-  infoCardEl.className = "ar-info-card";
+    const infoCardEl = document.createElement("section");
+    infoCardEl.className = "ar-info-card";
 
-  const infoTopRowEl = document.createElement("div");
-  infoTopRowEl.className = "ar-info-card-top";
+    const infoTopRowEl = document.createElement("div");
+    infoTopRowEl.className = "ar-info-card-top";
 
-  const titleEl = document.createElement("h1");
-  titleEl.className = "ar-info-card-title";
+    const titleEl = document.createElement("h1");
+    titleEl.className = "ar-info-card-title";
 
-  const priceEl = document.createElement("span");
-  priceEl.className = "ar-info-card-price";
+    const priceEl = document.createElement("span");
+    priceEl.className = "ar-info-card-price";
 
-  infoTopRowEl.append(titleEl, priceEl);
+    infoTopRowEl.append(titleEl, priceEl);
 
-  const subtitleEl = document.createElement("p");
-  subtitleEl.className = "ar-info-card-subtitle";
+    const subtitleEl = document.createElement("p");
+    subtitleEl.className = "ar-info-card-subtitle";
 
-  infoCardEl.append(infoTopRowEl, subtitleEl);
+    infoCardEl.append(infoTopRowEl, subtitleEl);
 
-  const controlsEl = document.createElement("div");
-  controlsEl.className = "ar-controls-panel";
+    const controlsEl = document.createElement("div");
+    controlsEl.className = "ar-controls-panel";
 
-  const materialRowEl = document.createElement("div");
-  materialRowEl.className = "ar-controls-row";
+    const materialRowEl = document.createElement("div");
+    materialRowEl.className = "ar-controls-row";
 
-  const materialLabelEl = document.createElement("span");
-  materialLabelEl.className = "ar-controls-label";
-  materialLabelEl.textContent = "Wariant:";
+    const materialLabelEl = document.createElement("span");
+    materialLabelEl.className = "ar-controls-label";
+    materialLabelEl.innerHTML = '<i class="bi bi-palette2" aria-hidden="true"></i><span>Wariant</span>';
 
-  const materialButtonsWrapEl = document.createElement("div");
-  materialButtonsWrapEl.className = "ar-controls-group";
+    const materialButtonsWrapEl = document.createElement("div");
+    materialButtonsWrapEl.className = "ar-controls-group";
 
-  materialRowEl.append(materialLabelEl, materialButtonsWrapEl);
+    materialRowEl.append(materialLabelEl, materialButtonsWrapEl);
 
-  const productRowEl = document.createElement("div");
-  productRowEl.className = "ar-controls-row ar-model-switcher";
+    const productRowEl = document.createElement("div");
+    productRowEl.className = "ar-controls-row ar-model-switcher";
 
-  const productLabelEl = document.createElement("span");
-  productLabelEl.className = "ar-controls-label";
-  productLabelEl.textContent = "Model:";
+    const productLabelEl = document.createElement("span");
+    productLabelEl.className = "ar-controls-label";
+    productLabelEl.innerHTML = '<i class="bi bi-box-seam" aria-hidden="true"></i><span>Model</span>';
 
-  const productButtonsWrapEl = document.createElement("div");
-  productButtonsWrapEl.className = "ar-controls-group";
+    const productButtonsWrapEl = document.createElement("div");
+    productButtonsWrapEl.className = "ar-controls-group";
 
-  const productBtnMap = new Map();
+    const productBtnMap = new Map();
 
-  products.forEach((product) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "ar-chip-btn";
-    btn.textContent = product.label || product.title;
+    products.forEach((product) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ar-chip-btn";
+        btn.textContent = product.label || product.title;
 
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (onMeasureLatency) onMeasureLatency(e.timeStamp);
-      setActiveProduct(product);
-      if (onSelectProduct) onSelectProduct(product);
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (onMeasureLatency) onMeasureLatency(e.timeStamp);
+            setActiveProduct(product);
+            if (onSelectProduct) onSelectProduct(product);
+        });
+
+        productButtonsWrapEl.appendChild(btn);
+        productBtnMap.set(product.id, btn);
     });
 
-    productButtonsWrapEl.appendChild(btn);
-    productBtnMap.set(product.id, btn);
-  });
+    productRowEl.append(productLabelEl, productButtonsWrapEl);
+    controlsEl.append(materialRowEl, productRowEl);
 
-  productRowEl.append(productLabelEl, productButtonsWrapEl);
-  controlsEl.append(materialRowEl, productRowEl);
+    rootEl.append(modeBarEl, infoCardEl, controlsEl);
+    document.body.appendChild(rootEl);
 
-  rootEl.append(modeBarEl, infoCardEl, controlsEl);
-  document.body.appendChild(rootEl);
+    const materialBtnMap = new Map();
 
-  const materialBtnMap = new Map();
+    function renderMaterialButtons(product) {
+        materialButtonsWrapEl.innerHTML = "";
+        materialBtnMap.clear();
 
-  function renderMaterialButtons(product) {
-    materialButtonsWrapEl.innerHTML = "";
-    materialBtnMap.clear();
+        const materials = product?.materials || [];
+        materials.forEach((variant) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "ar-swatch-btn";
+            btn.title = variant.label;
 
-    const materials = product?.materials || [];
-    materials.forEach((variant) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "ar-swatch-btn";
-      btn.title = variant.label;
+            const dot = document.createElement("span");
+            dot.className = "ar-swatch-dot";
+            dot.style.backgroundColor = variant.swatchHex || variant.colorHex || "#cccccc";
 
-      const dot = document.createElement("span");
-      dot.className = "ar-swatch-dot";
-      dot.style.backgroundColor = variant.swatchHex || variant.colorHex || "#cccccc";
+            const text = document.createElement("span");
+            text.textContent = variant.label;
 
-      const text = document.createElement("span");
-      text.textContent = variant.label;
+            btn.append(dot, text);
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (onMeasureLatency) onMeasureLatency(e.timeStamp);
+                activeMaterialId = variant.id;
+                refreshButtons();
+                if (onSelectMaterial) onSelectMaterial(variant);
+            });
 
-      btn.append(dot, text);
-      btn.addEventListener("click", (e) => {
+            materialButtonsWrapEl.appendChild(btn);
+            materialBtnMap.set(variant.id, btn);
+        });
+    }
+
+    function refreshButtons() {
+        clientBtnEl.classList.toggle("ar-mode-btn--active", currentMode === "client");
+        devBtnEl.classList.toggle("ar-mode-btn--active", currentMode === "developer");
+
+        materialBtnMap.forEach((btn, id) => {
+            btn.classList.toggle("ar-swatch-btn--active", id === activeMaterialId);
+        });
+
+        productBtnMap.forEach((btn, id) => {
+            btn.classList.toggle("ar-chip-btn--active", id === activeProduct?.id);
+        });
+    }
+
+    function setActiveProduct(product) {
+        if (!product) return;
+        activeProduct = product;
+        activeMaterialId = product.materials?.[0]?.id || null;
+
+        titleEl.textContent = product.title || "";
+        priceEl.textContent = product.price || "";
+        subtitleEl.textContent = product.subtitle || "";
+
+        renderMaterialButtons(product);
+        refreshButtons();
+    }
+
+    function applyMode(mode) {
+        currentMode = mode === "developer" ? "developer" : "client";
+        const isDev = currentMode === "developer";
+
+        document.body.classList.toggle("ar-mode-client", !isDev);
+        document.body.classList.toggle("ar-mode-developer", isDev);
+
+        infoCardEl.hidden = isDev;
+        productRowEl.hidden = !isDev;
+
+        const hudEl = document.querySelector(".ar-telemetry-hud");
+        if (hudEl) {
+            hudEl.hidden = !isDev;
+        }
+        if (!isDev && onSetTelemetryMinimized) {
+            onSetTelemetryMinimized(false);
+        }
+
+        refreshButtons();
+        if (onModeChange) onModeChange(currentMode);
+    }
+
+    clientBtnEl.addEventListener("click", (e) => {
         e.stopPropagation();
         if (onMeasureLatency) onMeasureLatency(e.timeStamp);
-        activeMaterialId = variant.id;
-        refreshButtons();
-        if (onSelectMaterial) onSelectMaterial(variant);
-      });
-
-      materialButtonsWrapEl.appendChild(btn);
-      materialBtnMap.set(variant.id, btn);
-    });
-  }
-
-  function refreshButtons() {
-    clientBtnEl.classList.toggle("ar-mode-btn--active", currentMode === "client");
-    devBtnEl.classList.toggle("ar-mode-btn--active", currentMode === "developer");
-
-    materialBtnMap.forEach((btn, id) => {
-      btn.classList.toggle("ar-swatch-btn--active", id === activeMaterialId);
+        applyMode("client");
     });
 
-    productBtnMap.forEach((btn, id) => {
-      btn.classList.toggle("ar-chip-btn--active", id === activeProduct?.id);
+    devBtnEl.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (onMeasureLatency) onMeasureLatency(e.timeStamp);
+        applyMode("developer");
     });
-  }
 
-  function setActiveProduct(product) {
-    if (!product) return;
-    activeProduct = product;
-    activeMaterialId = product.materials?.[0]?.id || null;
-
-    titleEl.textContent = product.title || "";
-    priceEl.textContent = product.price || "";
-    subtitleEl.textContent = product.subtitle || "";
-
-    renderMaterialButtons(product);
-    refreshButtons();
-  }
-
-  function applyMode(mode) {
-    currentMode = mode === "developer" ? "developer" : "client";
-    const isDev = currentMode === "developer";
-
-    document.body.classList.toggle("ar-mode-client", !isDev);
-    document.body.classList.toggle("ar-mode-developer", isDev);
-
-    infoCardEl.hidden = isDev;
-    productRowEl.hidden = !isDev;
-
-    const hudEl = document.querySelector(".ar-telemetry-hud");
-    if (hudEl) {
-      hudEl.hidden = !isDev;
+    if (activeProduct) {
+        setActiveProduct(activeProduct);
     }
-    if (!isDev && onSetTelemetryMinimized) {
-      onSetTelemetryMinimized(false);
-    }
+    applyMode(currentMode);
 
-    refreshButtons();
-    if (onModeChange) onModeChange(currentMode);
-  }
-
-  clientBtnEl.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (onMeasureLatency) onMeasureLatency(e.timeStamp);
-    applyMode("client");
-  });
-
-  devBtnEl.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (onMeasureLatency) onMeasureLatency(e.timeStamp);
-    applyMode("developer");
-  });
-
-  if (activeProduct) {
-    setActiveProduct(activeProduct);
-  }
-  applyMode(currentMode);
-
-  return {
-    getMode: () => currentMode,
-    setMode: applyMode,
-    setActiveProduct,
-  };
+    return {
+        getMode: () => currentMode,
+        setMode: applyMode,
+        setActiveProduct,
+    };
 }
