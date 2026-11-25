@@ -1,55 +1,75 @@
 {
-  "defaultProductId": "table-minimal",
+  "defaultProductId": "mug-traditional",
   "products": [
-    {
-      "id": "table-minimal",
-      "label": "Szafka",
-      "title": "Szafka stojąca",
-      "subtitle": "Obróć jednym palcem, przybliż dwoma. Wybierz wariant",
-      "price": "499 zł",
-      "modelUrl": "./assets/model.glb",
-      "scale": 0.5,
-      "materials": [
-        {
-          "id": "matte-oak",
-          "label": "Dąb mat",
-          "swatchHex": "#c89d6c",
-          "colorHex": "#c89d6c",
-          "roughness": 0.85,
-          "metalness": 0.0,
-          "maps": {
-            "map": null,
-            "roughnessMap": null,
-            "normalMap": null
-          }
-        },
-        {
-          "id": "satin-graphite",
-          "label": "Grafit satyna",
-          "swatchHex": "#3a3f47",
-          "colorHex": "#3a3f47",
-          "roughness": 0.35,
-          "metalness": 0.2,
-          "maps": {
-            "map": null,
-            "roughnessMap": null,
-            "normalMap": null
-          }
-        },
-        {
-          "id": "brushed-metal",
-          "label": "Metaliczny",
-          "swatchHex": "#9aa3ad",
-          "colorHex": "#9aa3ad",
-          "roughness": 0.25,
-          "metalness": 0.85,
-          "maps": {
-            "map": null,
-            "roughnessMap": null,
-            "normalMap": null
-          }
-        }
-      ]
-    }
+   {
+    "id": "mug-traditional",
+    "label": "Tradycyjny",
+    "title": "Kubek 50 cl",
+    "price": "12,99 zł",
+    "subtitle": "Modelowanie ręczne (Blender)",
+    "modelUrl": "./assets/kubek_blender.glb",
+    "scale": 1,
+    "materials": [
+      {
+        "id": "ceramicka",
+        "label": "Ceramika",
+        "swatchHex": "#77becc",
+        "colorHex": "#ffffff",
+        "mapUrl": "./assets/textures/blue_plaster_wall_diff_1k.jpg",
+        "roughnessMapUrl": "./assets/textures/blue_plaster_wall_rough_1k.png",
+        "normalMapUrl": "./assets/textures/blue_plaster_wall_nor_gl_1k.png",
+        "roughness": 0.25,
+        "metalness": 0.0,
+        "repeat": [2, 2]
+      },
+      {
+        "id": "tworzywo-sztuczne",
+        "label": "Tworzywo",
+        "swatchHex": "#d9b67e",
+        "colorHex": "#ffffff",
+        "mapUrl": "./assets/textures/linoleum_brown_diff_1k.jpg",
+        "roughnessMapUrl": "./assets/textures/linoleum_brown_rough_1k.png",
+        "normalMapUrl": "./assets/textures/linoleum_brown_nor_gl_1k.png",
+        "roughness": 0.65,
+        "metalness": 0.0,
+        "repeat": [2, 2]
+      }
+    ]
+  },
+  {
+    "id": "mug-ai",
+    "label": "AI",
+    "title": "Kubek 50 cl",
+    "price": "12,99 zł",
+    "subtitle": "Generowanie AI",
+    "modelUrl": "./assets/kubek_ai.glb",
+    "scale": 1,
+    "materials": [
+      {
+        "id": "ceramicka",
+        "label": "Ceramika",
+        "swatchHex": "#77becc",
+        "colorHex": "#ffffff",
+        "mapUrl": "./assets/textures/blue_plaster_wall_diff_1k.jpg",
+        "roughnessMapUrl": "./assets/textures/blue_plaster_wall_rough_1k.png",
+        "normalMapUrl": "./assets/textures/blue_plaster_wall_nor_gl_1k.png",
+        "roughness": 0.25,
+        "metalness": 0.0,
+        "repeat": [2, 2]
+      },
+      {
+        "id": "tworzywo-sztuczne",
+        "label": "Tworzywo",
+        "swatchHex": "#d9b67e",
+        "colorHex": "#ffffff",
+        "mapUrl": "./assets/textures/linoleum_brown_diff_1k.jpg",
+        "roughnessMapUrl": "./assets/textures/linoleum_brown_rough_1k.png",
+        "normalMapUrl": "./assets/textures/linoleum_brown_nor_gl_1k.png",
+        "roughness": 0.65,
+        "metalness": 0.0,
+        "repeat": [2, 2]
+      }
+    ]
+  }
   ]
 }

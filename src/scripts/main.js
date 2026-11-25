@@ -9,24 +9,39 @@ const FALLBACK_CATALOG = {
     defaultProductId: "table-minimal",
     products: [
         {
-            id: "table-minimal",
-            label: "Szafka",
-            title: "Szafka stojąca",
-            subtitle: "Obróć jednym palcem, przybliż dwoma. Wybierz wariant",
-            price: "499 zł",
-            modelUrl: "./assets/model.glb",
-            scale: 0.5,
-            materials: [
+            "id": "mug-traditional",
+            "label": "Tradycyjny",
+            "title": "Kubek 50 cl",
+            "price": "12,99 zł",
+            "subtitle": "Modelowanie ręczne (Blender)",
+            "modelUrl": "./assets/kubek_blender.glb",
+            "scale": 1,
+            "materials": [
                 {
-                    id: "default",
-                    label: "Domyślny",
-                    swatchHex: "#c89d6c",
-                    colorHex: "#ffffff",
-                    roughness: 0.78,
-                    metalness: 0.05,
-                    maps: { map: null, roughnessMap: null, normalMap: null },
+                    "id": "ceramicka",
+                    "label": "Ceramika",
+                    "swatchHex": "#77becc",
+                    "colorHex": "#ffffff",
+                    "mapUrl": "./assets/textures/blue_plaster_wall_diff_1k.jpg",
+                    "roughnessMapUrl": "./assets/textures/blue_plaster_wall_rough_1k.png",
+                    "normalMapUrl": "./assets/textures/blue_plaster_wall_nor_gl_1k.png",
+                    "roughness": 0.25,
+                    "metalness": 0.0,
+                    "repeat": [2, 2]
                 },
-            ],
+                {
+                    "id": "tworzywo-sztuczne",
+                    "label": "Tworzywo",
+                    "swatchHex": "#d9b67e",
+                    "colorHex": "#ffffff",
+                    "mapUrl": "./assets/textures/linoleum_brown_diff_1k.jpg",
+                    "roughnessMapUrl": "./assets/textures/linoleum_brown_rough_1k.png",
+                    "normalMapUrl": "./assets/textures/linoleum_brown_nor_gl_1k.png",
+                    "roughness": 0.65,
+                    "metalness": 0.0,
+                    "repeat": [2, 2]
+                }
+            ]
         },
     ],
 };
@@ -45,9 +60,10 @@ async function loadProductsCatalog(url = "./src/data/products.json") {
 const textureLoader = new THREE.TextureLoader();
 const textureCache = new Map();
 
-function getTexture(url, { isColor = true } = {}) {
+function getTexture(url, { isColor = true, repeat = [1, 1] } = {}) {
     if (!url) return Promise.resolve(null);
-    const cacheKey = `${url}__${isColor ? "color" : "data"}`;
+    const repeatKey = `${repeat[0]}x${repeat[1]}`;
+    const cacheKey = `${url}__${isColor ? "color" : "data"}__${repeatKey}`;
     if (textureCache.has(cacheKey)) return Promise.resolve(textureCache.get(cacheKey));
 
     return new Promise((resolve) => {
@@ -58,6 +74,7 @@ function getTexture(url, { isColor = true } = {}) {
                 texture.flipY = false;
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(repeat[0], repeat[1]);
                 textureCache.set(cacheKey, texture);
                 resolve(texture);
             },
@@ -73,19 +90,24 @@ function getTexture(url, { isColor = true } = {}) {
 async function applyMaterialVariant(root, variant) {
     if (!root || !variant) return;
 
-    const mapsConfig = variant.maps || {
-        map: variant.textureUrl || null,
-        roughnessMap: null,
-        normalMap: null,
-    };
+    const repeat = Array.isArray(variant.repeat) && variant.repeat.length === 2
+        ? variant.repeat
+        : [1, 1];
+
+    const mapUrl = variant.mapUrl ?? variant.maps?.map ?? variant.textureUrl ?? null;
+    const roughnessMapUrl = variant.roughnessMapUrl ?? variant.maps?.roughnessMap ?? null;
+    const normalMapUrl = variant.normalMapUrl ?? variant.maps?.normalMap ?? null;
 
     const [colorMap, roughnessMap, normalMap] = await Promise.all([
-        getTexture(mapsConfig.map, { isColor: true }),
-        getTexture(mapsConfig.roughnessMap, { isColor: false }),
-        getTexture(mapsConfig.normalMap, { isColor: false }),
+        getTexture(mapUrl, { isColor: true, repeat }),
+        getTexture(roughnessMapUrl, { isColor: false, repeat }),
+        getTexture(normalMapUrl, { isColor: false, repeat }),
     ]);
 
     const color = new THREE.Color(variant.colorHex || "#ffffff");
+    const normalScale = Array.isArray(variant.normalScale) && variant.normalScale.length === 2
+        ? variant.normalScale
+        : [1, 1];
 
     root.traverse((child) => {
         if (!child.isMesh || !child.material) return;
@@ -100,6 +122,7 @@ async function applyMaterialVariant(root, variant) {
         if ("map" in mat) mat.map = colorMap || null;
         if ("roughnessMap" in mat) mat.roughnessMap = roughnessMap || null;
         if ("normalMap" in mat) mat.normalMap = normalMap || null;
+        if (mat.normalScale) mat.normalScale.set(normalScale[0], normalScale[1]);
         if (typeof variant.roughness === "number" && "roughness" in mat) {
             mat.roughness = variant.roughness;
         }
@@ -166,6 +189,7 @@ const start = async () => {
         activeModel = model;
         activeModel.position.set(0, 0, 0);
         activeModel.rotation.set(0, 0, 0);
+        activeModel.scale.setScalar(product.scale ?? 0.5);
 
         await applyMaterialVariant(activeModel, activeMaterial);
         anchor.group.add(activeModel);
