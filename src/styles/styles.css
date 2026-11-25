@@ -172,6 +172,10 @@ body {
     padding: 11px 14px;
     box-sizing: border-box;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .ar-info-card-top {
@@ -201,6 +205,11 @@ body {
     font-size: 12px;
     line-height: 1.35;
     color: #c7bfb2;
+}
+
+.ar-info-card-dragging {
+  cursor: grabbing;
+  border-color: rgba(224, 169, 109, 0.55);
 }
 
 .ar-controls-panel {

@@ -32,7 +32,7 @@ export function createAppUi({
     const devBtnEl = document.createElement("button");
     devBtnEl.type = "button";
     devBtnEl.className = "ar-mode-btn";
-    devBtnEl.innerHTML = '<i class="bi bi-sliders2" aria-hidden="true"></i>';
+    devBtnEl.innerHTML = '<i class="bi bi-wrench-adjustable" aria-hidden="true"></i>';
     devBtnEl.title = "Tryb Deweloper";
     devBtnEl.setAttribute("aria-label", "Tryb Deweloper");
 
@@ -40,6 +40,62 @@ export function createAppUi({
 
     const infoCardEl = document.createElement("section");
     infoCardEl.className = "ar-info-card";
+
+    function makeDraggable(el) {
+        let startX = 0;
+        let startY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        let isDragging = false;
+
+        el.addEventListener("pointerdown", (e) => {
+            if (e.pointerType === "mouse" && e.button !== 0) return;
+
+            isDragging = true;
+            el.classList.add("ar-info-card-dragging");
+
+            startX = e.clientX - currentX;
+            startY = e.clientY - currentY;
+
+            el.setPointerCapture(e.pointerId);
+        });
+
+        el.addEventListener("pointermove", (e) => {
+            if (!isDragging) return;
+
+            const rawX = e.clientX - startX;
+            const rawY = e.clientY - startY;
+
+            const rect = el.getBoundingClientRect();
+            const baseLeft = rect.left - currentX;
+            const baseTop = rect.top - currentY;
+
+            const minX = 8 - baseLeft;
+            const maxX = window.innerWidth - rect.width - 8 - baseLeft;
+
+            const minY = 8 - baseTop;
+            const maxY = window.innerHeight - rect.height - 8 - baseTop;
+
+            currentX = Math.min(Math.max(rawX, minX), maxX);
+            currentY = Math.min(Math.max(rawY, minY), maxY);
+
+            el.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+        });
+
+        function stopDrag(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            el.classList.remove("ar-info-card-dragging");
+            if (el.hasPointerCapture && el.hasPointerCapture(e.pointerId)) {
+                el.releasePointerCapture(e.pointerId);
+            }
+        }
+
+        el.addEventListener("pointerup", stopDrag);
+        el.addEventListener("pointercancel", stopDrag);
+    }
+
+    makeDraggable(infoCardEl);
 
     const infoTopRowEl = document.createElement("div");
     infoTopRowEl.className = "ar-info-card-top";
