@@ -145,6 +145,8 @@ const start = async () => {
     const mindarThree = new MindARThree({
         container,
         imageTargetSrc: "./assets/targets.mind",
+        filterMinCF: 0.0002,
+        filterBeta: 0.02,
     });
     // const mindarThree = new MindARThree({
     //     container: document.querySelector("#ar-container"),
@@ -190,6 +192,25 @@ const start = async () => {
         activeModel.position.set(0, 0, 0);
         activeModel.rotation.set(0, 0, 0);
         activeModel.scale.setScalar(product.scale ?? 0.5);
+
+        if (Array.isArray(product.rotation) && product.rotation.length === 3) {
+            activeModel.rotation.set(
+                product.rotation[0],
+                product.rotation[1],
+                product.rotation[2]
+            );
+        }
+
+        activeModel.updateMatrixWorld(true);
+        const box = new THREE.Box3().setFromObject(activeModel);
+        const center = box.getCenter(new THREE.Vector3());
+
+        const yOffset = product.yOffset ?? 0;
+        activeModel.position.set(
+            -center.x,
+            -box.min.y + yOffset,
+            -center.z
+        );
 
         await applyMaterialVariant(activeModel, activeMaterial);
         anchor.group.add(activeModel);
